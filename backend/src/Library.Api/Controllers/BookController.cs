@@ -1,9 +1,7 @@
-using Library.Core.Domain.Models;
-using Library.Core.Domain.Repositories;
 using Library.Core.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
-using Library.Core.Enums;
+using Library.Common.Enums;
 
 namespace Library.Controllers;
 
@@ -18,7 +16,6 @@ public class BookController : ApiControllerBase
         _bookService = bookService;
     }
 
-    [HttpGet]
     [HttpGet("{criteria}/{search?}")]
     public async Task<IActionResult> Get(SearchBookCriteriaEnum criteria,
         string? search, CancellationToken cancellationToken)

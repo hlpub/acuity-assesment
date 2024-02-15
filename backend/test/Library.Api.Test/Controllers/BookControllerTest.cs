@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using Xunit;
-using Library.Core.Enums;
+using Library.Common.Enums;
 
 namespace Clarity.Api.UnitTests.Controllers
 {

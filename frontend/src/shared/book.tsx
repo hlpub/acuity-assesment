@@ -6,7 +6,7 @@ type Book = {
     totalCopies: string,
     copiesInUse: string,
     type: string | null,
-    iSBN: string | null,
+    isbn: string | null,
     category: string | null,
 }
 

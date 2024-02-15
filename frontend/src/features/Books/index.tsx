@@ -1,5 +1,5 @@
-import { Button, Grid, MenuItem, Select, SelectChangeEvent, TextField } from "@mui/material";
-import { useState } from "react";
+import { Button, FormControl, Grid, InputLabel, MenuItem, Select, SelectChangeEvent, TextField } from "@mui/material";
+import { useCallback, useState } from "react";
 import BookList from "../../components/BookList";
 import Book from "../../shared/book";
 import { populateGrid } from "./data";
@@ -20,24 +20,45 @@ const Books = () => {
         setSearchCriteria(parseInt(e.target.value));
     }
 
-    //Probably if this was a real world app, I would use React query instead
-    const handleSearch = () => {
-        populateGrid(setError, setBooks, search, searchCriteria);
+    const handleSearchKeyPress = (e: React.KeyboardEvent<HTMLDivElement>) => {
+        if (e.key === "Enter") handleSearch();
     }
 
+    //Probably if this was a real world app, I would use React query instead
+    const handleSearch = useCallback(() => {
+
+        if (search)
+            populateGrid(setError, setBooks, search, searchCriteria);
+
+    }, [search, searchCriteria]);
+
     return <>
-        <Grid container marginBottom={5} minWidth={700}>
-            <Grid item xs={5} flexDirection="column" display="flex" gap={2} alignItems="center">
-                <div>Search By <Select value="1" onChange={handleCriteriaChange}>
-                    <MenuItem value={1}>Title</MenuItem>
-                    <MenuItem value={2}>Author</MenuItem>
-                    <MenuItem value={3}>ISBN</MenuItem>
-                </Select>
-                </div>
-                <div>
+        <Grid container
+            direction="column"
+            rowGap={4}
+            justifyContent="center"
+            alignItems="flex-start"
+            marginY={5}>
+            <Grid item>
+                <FormControl sx={{ minWidth: 300 }} size="small">
+                    <InputLabel>Search by</InputLabel>
+                    <Select
+                        value={searchCriteria.toString()} onChange={handleCriteriaChange} label="Search by">
+                        <MenuItem value={SearchCriteria.Title}>Title</MenuItem>
+                        <MenuItem value={SearchCriteria.Author}>Author</MenuItem>
+                        <MenuItem value={SearchCriteria.ISBN}>ISBN</MenuItem>
+                    </Select>
+                </FormControl>
+            </Grid>
+            <Grid item>
+                <FormControl sx={{ minWidth: 300 }} size="small">
                     <TextField onChange={handleSearchChange} value={search}
-                        label="Search" helperText="Type for search books" variant="standard" />
-                </div>
+                        onKeyDown={handleSearchKeyPress}
+                        label="Search term" placeholder="Enter search term"
+                        helperText="Type for searching books" variant="standard" />
+                </FormControl>
+            </Grid>
+            <Grid item alignSelf="end">
                 <Button sx={{ height: '25px' }} variant="contained"
                     onClick={handleSearch}>Search</Button>
             </Grid>

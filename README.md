@@ -24,6 +24,7 @@ as part of a techincal assessment.
 * Go to the project directory and run 
 
 ```
+docker compose build --no-cache
 docker compose up
 ```
 
@@ -44,12 +45,19 @@ knowledge on certain areas, there are certain practices that were not implemente
 the Author usually use in real world scenarios like proper config in fe, the use of react query,
 caching policies, unit testing, cors policies, auth, etc.
 
-I had no time to work on the Azure deploy. 
-The FE stole almost all my time. I wrote a react app with typescript
-But I created a handy docker compose instead to probe knowledge in containerized apps.
+The FE is React/Typescript based.
+It was built with CRA, although the author is aware that there are better tools for bundling
+like Vite or NextJs.
+MaterialUI was used for some UI components. 
+
+I created a handy docker compose instead to probe knowledge in containerized apps.
 
 Also added a basic test using Xunit, AutoFixture, Fluent Assertions and Mock
 Also added all CRUD methods in BaseRepository class
+
+To showcase knowledge on event driven design I added a RabbitMQ instance, and a 
+MassTransit consumer with a sample message being sent on every book search for (any) further processing.
+
 
 ## Authors
 

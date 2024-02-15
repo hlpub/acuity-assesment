@@ -8,11 +8,11 @@ const BookList: React.FC<{
     books: Book[] | null
 }> = ({ books }) => {
 
-    return books ? <TableContainer component={Paper} >
+    return books && books.length > 0  ? <TableContainer component={Paper} >
         <Table sx={{ minWidth: 950 }} aria-label="simple table">
             <TableHead>
                 <TableRow>
-                    <TableCell align="right">Book Title</TableCell>
+                    <TableCell>Book Title</TableCell>
                     <TableCell>Authors</TableCell>
                     <TableCell>Type</TableCell>
                     <TableCell>ISBN</TableCell>
@@ -26,14 +26,14 @@ const BookList: React.FC<{
                         <TableCell>{book.title}</TableCell>
                         <TableCell>{book.firstName + " " + book.lastName}</TableCell>
                         <TableCell>{book.type}</TableCell>
-                        <TableCell>{book.iSBN}</TableCell>
+                        <TableCell>{book.isbn}</TableCell>
                         <TableCell>{book.category}</TableCell>
                         <TableCell align="right">{book.copiesInUse}/{book.totalCopies}</TableCell>
                     </TableRow>
                 ))}
             </TableBody>
         </Table>
-    </TableContainer> : <>There are no books loaded</>;
+    </TableContainer> : <>There are no results</>;
 }
 
 export default BookList

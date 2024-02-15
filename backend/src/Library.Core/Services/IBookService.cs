@@ -1,5 +1,5 @@
 ﻿using Library.Core.Domain.Models;
-using Library.Core.Enums;
+using Library.Common.Enums;
 
 namespace Library.Core.Services
 {

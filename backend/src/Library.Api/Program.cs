@@ -1,9 +1,13 @@
 using Library.Core.DbContexts;
 using Library.Core.Extensions;
+using Library.Api.Extensions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage;
 using Serilog;
+using MassTransit;
+using Library.Api.SettingsHelpers;
+using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -39,6 +43,24 @@ try
     services.AddDbContext<LibraryDbContext>(options =>
         options.UseSqlServer(config.GetSection("ConnectionStrings:LibraryDb").Value));
 
+    var busSettings = config.GetSection("BusSettings").Get<BusSettings>();
+    if (busSettings is not null && !busSettings.Host.IsNullOrEmpty()
+        && !busSettings.Username.IsNullOrEmpty() && !busSettings.Password.IsNullOrEmpty())
+        builder.Services.AddMassTransit(x =>
+        {
+            x.AddConsumers();
+
+            x.UsingRabbitMq((context, cfg) =>
+            {
+                cfg.Host(new Uri(busSettings.Host), h =>
+                {
+                    h.Username(busSettings.Username);
+                    h.Password(busSettings.Password);
+                });
+
+                cfg.ConfigureEndpoints(context, busSettings);
+            });
+        });
     services.AddCoreServices();
 
     var app = builder.Build();
@@ -46,17 +68,15 @@ try
     using (var serviceScope = app?.Services?.GetService<IServiceScopeFactory>()?.CreateScope())
     {
         var context = serviceScope!.ServiceProvider.GetRequiredService<LibraryDbContext>();
-        var runMigrations = !(context.Database.GetService<IDatabaseCreator>()
-            as RelationalDatabaseCreator)!.Exists();
-
-        context.Database.EnsureCreated();
+        var dbCreator = context.Database.GetService<IDatabaseCreator>() as RelationalDatabaseCreator;
 
         //Probably not the best way to run migrations. Just did it this way for easiness
-        if (runMigrations)
+        if (!dbCreator!.Exists())
         {
-            var sql = File.ReadAllText("db.sql");
-            context.Database.ExecuteSqlRaw(sql);
+            dbCreator.Create();
+            context.Database.ExecuteSqlRaw(File.ReadAllText("db.sql"));
         }
+
     }
 
     // Configure the HTTP request pipeline.

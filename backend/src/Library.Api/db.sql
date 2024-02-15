@@ -1,3 +1,8 @@
+/*
+ This script has been provided and copied directly from the assesment text.
+ Real world scripts should be idempotent (and always wrapped within a transaction)
+*/
+
 create table Books (
 	Id INT PRIMARY KEY IDENTITY (1, 1),
 	Title Varchar(100) not null,

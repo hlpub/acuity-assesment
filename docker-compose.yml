@@ -1,17 +1,5 @@
 version: "3.9"
 services:
- web_api:
-  build: backend
-  container_name: library_api
-  ports:
-     - 5000:80
-  environment:
-   - ASPNETCORE_ENVIRONMENT=Development
- frontend:
-    build: frontend
-    container_name: library_ui
-    ports:
-      - 3000:3000 
  sql:
     image: "mcr.microsoft.com/mssql/server:2022-latest"
     container_name: sql_server
@@ -21,3 +9,31 @@ services:
       - ACCEPT_EULA=y
       - SA_PASSWORD=A&VeryComplex123Password
       - MSSQL_PID=Express
+
+ acuitymq:
+    image: rabbitmq:3-management-alpine
+    container_name: 'acuitymq'
+    ports:
+        - 5672:5672
+        - 15672:15672
+    volumes:
+        - ~/.docker-conf/rabbitmq/data/:/var/lib/rabbitmq/
+        - ~/.docker-conf/rabbitmq/log/:/var/log/rabbitmq
+
+ web_api:
+  build: backend
+  depends_on:
+      - sql
+      - acuitymq
+  container_name: library_api
+  ports:
+     - 5000:8080
+  environment:
+   - ASPNETCORE_ENVIRONMENT=Development
+  entrypoint: ["/wait-for-it.sh", "sql:1433", "-t", "120", "--", "dotnet", "Library.Api.dll"]
+
+ frontend:
+   build: frontend
+   container_name: library_ui
+   ports:
+     - 3000:3000
