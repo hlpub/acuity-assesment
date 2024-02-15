@@ -50,7 +50,7 @@ It was built with CRA, although the author is aware that there are better tools 
 like Vite or NextJs.
 MaterialUI was used for some UI components. 
 
-I created a handy docker compose instead to probe knowledge in containerized apps.
+I created a handy docker compose to probe knowledge in containerized apps.
 
 Also added a basic test using Xunit, AutoFixture, Fluent Assertions and Mock
 Also added all CRUD methods in BaseRepository class
